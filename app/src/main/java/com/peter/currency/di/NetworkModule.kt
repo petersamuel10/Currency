@@ -27,19 +27,31 @@ object NetworkModule {
     }
 
     @Provides
-    fun provideBaseUrl() = ""
+    @Singleton
+    fun Interceptor() = Interceptor { chain ->
+        val request =
+            chain.request().newBuilder()
+                .header("apikey", "6ue6Kz4SfR5fu5TjrxnMnHj5NiEkaiDG")
+                .build()
+        chain.proceed(request)
+    }
+
+    @Provides
+    fun provideBaseUrl() = "https://api.apilayer.com/fixer/"
 
 
     @Provides
     @Singleton
-    fun provideOkHttpClient() = if (BuildConfig.DEBUG) {
+    fun provideOkHttpClient(interceptor: Interceptor) = if (BuildConfig.DEBUG) {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
+            .addInterceptor(interceptor)
             .build()
     } else OkHttpClient
         .Builder()
+        .addInterceptor(interceptor)
         .build()
 
 

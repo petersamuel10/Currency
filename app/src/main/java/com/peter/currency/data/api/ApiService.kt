@@ -1,4 +1,4 @@
-package com.peter.currency.data
+package com.peter.currency.data.api
 
 import com.peter.currency.data.model.Currency
 import retrofit2.http.GET

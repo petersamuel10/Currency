@@ -3,7 +3,9 @@ package com.peter.currency.di
 import android.content.Context
 import com.peter.currency.BuildConfig
 import com.peter.currency.base.App
-import com.peter.currency.data.ApiService
+import com.peter.currency.data.api.ApiHelper
+import com.peter.currency.data.api.ApiHelperImpl
+import com.peter.currency.data.api.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -64,4 +66,9 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideApiHelper(apiHelper: ApiHelperImpl): ApiHelper = apiHelper
+
 }

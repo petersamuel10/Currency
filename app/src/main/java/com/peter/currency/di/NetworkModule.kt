@@ -2,6 +2,7 @@ package com.peter.currency.di
 
 import android.content.Context
 import com.peter.currency.BuildConfig
+import com.peter.currency.R
 import com.peter.currency.base.App
 import com.peter.currency.data.api.ApiHelper
 import com.peter.currency.data.api.ApiHelperImpl
@@ -30,10 +31,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun Interceptor() = Interceptor { chain ->
+    fun Interceptor(context: Context) = Interceptor { chain ->
         val request =
             chain.request().newBuilder()
-                .header("apikey", "6ue6Kz4SfR5fu5TjrxnMnHj5NiEkaiDG")
+                .header("apikey", context.resources.getString(R.string.api_key))
                 .build()
         chain.proceed(request)
     }

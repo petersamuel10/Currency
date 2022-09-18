@@ -10,6 +10,6 @@ class ApiHelperImpl @Inject constructor(
 ) : ApiHelper {
 
     override suspend fun getSymbols(): Currency {
-        TODO("Not yet implemented")
+        return apiService.getCurrency()
     }
 }

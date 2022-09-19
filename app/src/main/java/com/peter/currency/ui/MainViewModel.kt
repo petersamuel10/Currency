@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.peter.currency.data.model.ConvertResponse
 import com.peter.currency.data.model.Currency
+import com.peter.currency.data.model.Historical
 import com.peter.currency.data.repository.Repository
 import com.peter.currency.util.NetworkHelper
 import com.peter.currency.util.Resource
@@ -24,6 +25,10 @@ class MainViewModel @Inject constructor(
     private val _symbolsData = MutableLiveData<Resource<Currency>>()
     val symbolsData: LiveData<Resource<Currency>>
         get() = _symbolsData
+
+    private val _historicalData = MutableLiveData<Resource<List<Historical>>>()
+    val historicalData: LiveData<Resource<List<Historical>>>
+        get() = _historicalData
 
     private val _convertResult = MutableLiveData<Resource<ConvertResponse>>()
     val convertResult: LiveData<Resource<ConvertResponse>>
@@ -51,6 +56,19 @@ class MainViewModel @Inject constructor(
                 }
             } catch (ex: Exception) {
                 _convertResult.postValue(Resource.error(ex.message.toString(), null))
+            }
+        }
+    }
+
+    fun getHistorical() {
+        viewModelScope.launch {
+            _historicalData.postValue(Resource.loading(null))
+            try {
+                repository.getHistorical().let {
+                    _historicalData.postValue(Resource.success(it))
+                }
+            } catch (ex: Exception) {
+                _historicalData.postValue(Resource.error(ex.message.toString(), null))
             }
         }
     }

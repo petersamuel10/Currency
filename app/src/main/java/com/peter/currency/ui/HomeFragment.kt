@@ -12,6 +12,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.peter.currency.databinding.FragmentHomeBinding
 import com.peter.currency.util.Status
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,15 +42,10 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(FlowPreview::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel.getSymbols()
-    }
-
-    @OptIn(FlowPreview::class)
-    override fun onStart() {
-        super.onStart()
-
         mainViewModel.symbolsData.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.LOADING -> {}
@@ -78,6 +74,11 @@ class HomeFragment : Fragment() {
             }
         }
 
+        binding.detailsBtn.setOnClickListener {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToDetailsFragment()
+            )
+        }
         binding.swapBtn.setOnClickListener {
             val temp = binding.fromSpinner.selectedItemPosition
             binding.fromSpinner.apply {
@@ -90,7 +91,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.fromAmount.textInputAsFlow()
-            .debounce(500) // delay to prevent searching immediately on every character input
+            .debounce(100) // delay to prevent searching immediately on every character input
             .onEach { callConvert(it.toString()) }
             .launchIn(lifecycleScope)
     }

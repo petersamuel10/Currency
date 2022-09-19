@@ -31,7 +31,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun Interceptor(context: Context) = Interceptor { chain ->
+    fun Interceptor(context: App) = Interceptor { chain ->
         val request =
             chain.request().newBuilder()
                 .header("apikey", context.resources.getString(R.string.api_key))

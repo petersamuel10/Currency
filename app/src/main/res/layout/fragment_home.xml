@@ -13,10 +13,20 @@
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_32sdp"
         android:background="@color/purple_200"
-        app:layout_constraintEnd_toStartOf="@+id/toSpinner"
+        app:layout_constraintEnd_toStartOf="@+id/swapBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/swapBtn"
+        android:layout_width="@dimen/_32sdp"
+        android:layout_height="@dimen/_32sdp"
+        android:src="@drawable/ic_swap"
+        app:layout_constraintEnd_toStartOf="@+id/toSpinner"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/fromSpinner"
+        app:layout_constraintTop_toTopOf="@+id/fromSpinner" />
 
     <Spinner
         android:id="@+id/toSpinner"
@@ -25,32 +35,40 @@
         android:background="@color/purple_200"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/fromSpinner"
+        app:layout_constraintStart_toEndOf="@+id/swapBtn"
         app:layout_constraintTop_toTopOf="@+id/fromSpinner" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/fromAmount"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_32sdp"
         android:layout_marginTop="@dimen/_32sdp"
+        android:background="@drawable/border"
+        android:inputType="number"
+        android:textAlignment="center"
         app:layout_constraintStart_toStartOf="@+id/fromSpinner"
         app:layout_constraintTop_toBottomOf="@+id/fromSpinner" />
 
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/toAmount"
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_32sdp"
+        android:background="@drawable/border"
+        android:inputType="number"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fromAmount"
         app:layout_constraintTop_toTopOf="@+id/fromAmount" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/detailsBtn"
         android:layout_width="@dimen/_90sdp"
         android:layout_height="@dimen/_32sdp"
+        android:layout_marginTop="128dp"
+        android:text="Details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Details"
         app:layout_constraintTop_toBottomOf="@+id/fromAmount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

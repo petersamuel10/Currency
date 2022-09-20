@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.peter.currency.data.model.ConvertResponse
 import com.peter.currency.data.model.Currency
 import com.peter.currency.data.model.Historical
 import com.peter.currency.data.repository.Repository
@@ -12,8 +11,10 @@ import com.peter.currency.util.NetworkHelper
 import com.peter.currency.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -21,6 +22,9 @@ class MainViewModel @Inject constructor(
     private val networkHelper: NetworkHelper,
     private val repository: Repository,
 ) : ViewModel() {
+
+    var fromAmount = MutableStateFlow("1")
+    var toAmount = MutableStateFlow("")
 
     private val _symbolsData = MutableLiveData<Resource<Currency>>()
     val symbolsData: LiveData<Resource<Currency>>
@@ -30,32 +34,28 @@ class MainViewModel @Inject constructor(
     val historicalData: LiveData<Resource<List<Historical>>>
         get() = _historicalData
 
-    private val _convertResult = MutableLiveData<Resource<ConvertResponse>>()
-    val convertResult: LiveData<Resource<ConvertResponse>>
-        get() = _convertResult
 
     fun getSymbols() {
-        viewModelScope.launch {
-            _symbolsData.postValue(Resource.loading(null))
-            try {
-                repository.getSymbols().let {
-                    _symbolsData.postValue(Resource.success(it))
+        if (networkHelper.isNetworkConnected())
+            viewModelScope.launch {
+                _symbolsData.postValue(Resource.loading(null))
+                try {
+                    repository.getSymbols().let {
+                        _symbolsData.postValue(Resource.success(it))
+                    }
+                } catch (ex: Exception) {
+                    _symbolsData.postValue(Resource.error(ex.message.toString(), null))
                 }
-            } catch (ex: Exception) {
-                _symbolsData.postValue(Resource.error(ex.message.toString(), null))
             }
-        }
+        else
+            _symbolsData.postValue(Resource.error("No Internet connection", null))
+
     }
 
-    fun convert(to: String, from: String, amount: String) {
+    fun convert(to: String, from: String) {
         viewModelScope.launch {
-            _convertResult.postValue(Resource.loading(null))
-            try {
-                repository.convert(to, from, amount).let {
-                    _convertResult.postValue(Resource.success(it))
-                }
-            } catch (ex: Exception) {
-                _convertResult.postValue(Resource.error(ex.message.toString(), null))
+            repository.convert(from, to, toAmount.value).let {
+                fromAmount.value = it.result.toString()
             }
         }
     }

@@ -52,10 +52,10 @@ class MainViewModel @Inject constructor(
 
     }
 
-    fun convert(to: String, from: String) {
+    fun convert( to: String, from: String) {
         viewModelScope.launch {
-            repository.convert(from, to, toAmount.value).let {
-                fromAmount.value = it.result.toString()
+            repository.convert(from, to, fromAmount.value).let {
+                toAmount.value = it.result.toString()
             }
         }
     }

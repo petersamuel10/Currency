@@ -81,5 +81,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/fromAmount" />
 
+
+        <ProgressBar
+            android:id="@+id/loading"
+            android:layout_width="@dimen/_32sdp"
+            android:layout_height="@dimen/_32sdp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toAmount" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

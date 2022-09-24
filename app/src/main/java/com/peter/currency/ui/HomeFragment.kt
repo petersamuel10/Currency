@@ -44,14 +44,35 @@ class HomeFragment : Fragment() {
 
         mainViewModel.symbolsData.observe(viewLifecycleOwner) {
             when (it.status) {
-                Status.LOADING -> {}
+                Status.LOADING -> {
+                    binding.loading.visibility = View.VISIBLE
+                }
                 Status.ERROR -> {
+                    binding.loading.visibility = View.GONE
                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
                 }
                 Status.SUCCESS -> {
                     it.data?.let { _ ->
+                        binding.loading.visibility = View.GONE
                         val symbolsList = it.data.symbols.keys.toTypedArray()
                         setupSpinner(symbolsList)
+                    }
+                }
+            }
+        }
+
+        mainViewModel.convertData.observe(viewLifecycleOwner) {
+            when (it.status) {
+                Status.LOADING -> {
+                    binding.loading.visibility = View.VISIBLE
+                }
+                Status.ERROR -> {
+                    binding.loading.visibility = View.GONE
+                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_LONG).show()
+                }
+                Status.SUCCESS -> {
+                    it.data?.let { _ ->
+                        binding.loading.visibility = View.GONE
                     }
                 }
             }
@@ -93,13 +114,13 @@ class HomeFragment : Fragment() {
         with(binding.fromSpinner)
         {
             adapter = aa
-            setSelection(0, false)
+            setSelection(mainViewModel.fromCurrency.value, false)
         }
 
         with(binding.toSpinner)
         {
             adapter = aa
-            setSelection(0, false)
+            setSelection(mainViewModel.toCurrency.value, false)
         }
 
         mainViewModel.fromAmount.debounce(100).onEach {
@@ -118,6 +139,7 @@ class HomeFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
+                mainViewModel.fromCurrency.value = position
                 callConvert()
             }
 
@@ -133,6 +155,7 @@ class HomeFragment : Fragment() {
                 position: Int,
                 id: Long
             ) {
+                mainViewModel.toCurrency.value = position
                 callConvert()
             }
 

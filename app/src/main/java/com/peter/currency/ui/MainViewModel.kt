@@ -26,9 +26,16 @@ class MainViewModel @Inject constructor(
     var fromAmount = MutableStateFlow("1")
     var toAmount = MutableStateFlow("")
 
+    var fromCurrency = MutableStateFlow(0)
+    var toCurrency = MutableStateFlow(0)
+
     private val _symbolsData = MutableLiveData<Resource<Currency>>()
     val symbolsData: LiveData<Resource<Currency>>
         get() = _symbolsData
+
+    private val _convertData = MutableLiveData<Resource<String>>()
+    val convertData: LiveData<Resource<String>>
+        get() = _convertData
 
     private val _historicalData = MutableLiveData<Resource<List<Historical>>>()
     val historicalData: LiveData<Resource<List<Historical>>>
@@ -52,12 +59,28 @@ class MainViewModel @Inject constructor(
 
     }
 
-    fun convert( to: String, from: String) {
-        viewModelScope.launch {
-            repository.convert(from, to, fromAmount.value).let {
-                toAmount.value = it.result.toString()
+    fun convert(to: String, from: String) {
+
+        if (networkHelper.isNetworkConnected())
+            viewModelScope.launch {
+                _convertData.postValue(Resource.loading(null))
+                try {
+                    repository.convert(to, from, fromAmount.value).let {
+                        _convertData.postValue(Resource.success(it.result.toString()))
+                        toAmount.value = it.result.toString()
+                    }
+                } catch (ex: Exception) {
+                    _convertData.postValue(Resource.error(ex.message.toString(), null))
+                }
             }
-        }
+        else
+            _convertData.postValue(Resource.error("No Internet connection", null))
+        if (networkHelper.isNetworkConnected())
+            viewModelScope.launch {
+                repository.convert(to, from, fromAmount.value).let {
+                    toAmount.value = it.result.toString()
+                }
+            }
     }
 
     fun getHistorical() {
